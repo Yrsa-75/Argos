@@ -7,6 +7,17 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps && npm cache clean --force
 
+# Installer les dépendances manquantes du worker
+RUN npm install --no-save \
+    tsx \
+    @anthropic-ai/sdk \
+    @aws-sdk/client-s3 \
+    @aws-sdk/s3-request-presigner \
+    @supabase/supabase-js \
+    express \
+    cors \
+    openai
+
 COPY src/ ./src/
 COPY worker/ ./worker/
 COPY tsconfig*.json ./
