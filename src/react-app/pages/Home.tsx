@@ -181,7 +181,7 @@ export default function Home() {
       );
 
       for (const clip of clipsOnTrack) {
-        // Banner clips have no asset — render as lower-third HTML overlay
+        // Banner clips have no asset â render as lower-third HTML overlay
         if (clip.bannerData) {
           layers.push({
             id: clip.id,
@@ -617,7 +617,7 @@ export default function Home() {
       targetAssetId = videoAsset.id;
     }
 
-    setActionStatus('Applying AI edit…');
+    setActionStatus('Applying AI editâ¦');
     try {
     console.log('Applying FFmpeg edit to asset:', targetAssetId);
     console.log('Command:', command);
@@ -664,7 +664,7 @@ export default function Home() {
       return;
     }
 
-    setActionStatus('Generating chapters…');
+    setActionStatus('Generating chaptersâ¦');
     try {
       const result = await legacyGenerateChapters();
       setChapterData(result);
@@ -702,7 +702,7 @@ export default function Home() {
       throw new Error('No video clip on V1 track. Please add a video to the timeline first.');
     }
 
-    setActionStatus('Cutting at chapter marks…');
+    setActionStatus('Cutting at chapter marksâ¦');
     try {
     console.log('Generating chapters and making cuts...');
 
@@ -823,7 +823,7 @@ export default function Home() {
       throw new Error('Please upload a video first');
     }
 
-    setActionStatus('Extracting keywords & GIFs…');
+    setActionStatus('Extracting keywords & GIFsâ¦');
     try {
     // Call the transcribe-and-extract endpoint
     const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/transcribe-and-extract`, {
@@ -860,7 +860,7 @@ export default function Home() {
     const videoAsset = assets.find(a => a.type === 'video' && !a.aiGenerated) || assets.find(a => a.type === 'video');
     if (!videoAsset) throw new Error('Please upload a video first');
 
-    setActionStatus(`Generating ${numClips} viral short(s)…`);
+    setActionStatus(`Generating ${numClips} viral short(s)â¦`);
     try {
       const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/create-viral-shorts`, {
         method: 'POST',
@@ -895,7 +895,7 @@ export default function Home() {
       throw new Error('Please upload a video first');
     }
 
-    setActionStatus('Generating B-roll images…');
+    setActionStatus('Generating B-roll imagesâ¦');
     try {
     // Call the generate-broll endpoint
     const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/generate-broll`, {
@@ -985,7 +985,7 @@ export default function Home() {
       throw new Error('Please upload a video first');
     }
 
-    setActionStatus('Removing silence…');
+    setActionStatus('Removing silenceâ¦');
     try {
     console.log('Removing dead air from video...');
 
@@ -1049,7 +1049,7 @@ export default function Home() {
       throw new Error('No session available');
     }
 
-    setActionStatus('Running smart crop…');
+    setActionStatus('Running smart cropâ¦');
     try {
     const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/face-crop`, {
       method: 'POST',
@@ -1122,7 +1122,7 @@ export default function Home() {
       throw new Error('Please upload a video first');
     }
 
-    setActionStatus('Transcribing audio…');
+    setActionStatus('Transcribing audioâ¦');
     try {
     // Call the transcribe endpoint
     const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/transcribe`, {
@@ -1138,7 +1138,7 @@ export default function Home() {
 
     const data = await response.json();
     console.log('Transcription result:', data);
-    setActionStatus('Adding captions…');
+    setActionStatus('Adding captionsâ¦');
 
     if (data.words && data.words.length > 0) {
       // Split words into chunks based on natural speech pauses
@@ -1242,7 +1242,7 @@ export default function Home() {
       return;
     }
 
-    setActionStatus('Rendering motion graphic…');
+    setActionStatus('Rendering motion graphicâ¦');
     try {
       // Call the server to render the motion graphic
       const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/render-motion-graphic`, {
@@ -1291,7 +1291,7 @@ export default function Home() {
       throw new Error('Please upload a video first to start a session');
     }
 
-    setActionStatus('Generating AI animation…');
+    setActionStatus('Generating AI animationâ¦');
     try {
       // Find the primary video asset to use as context for the animation
       // First check V1 clips, then fall back to first video asset
@@ -1405,7 +1405,7 @@ export default function Home() {
       throw new Error('Please upload a video first');
     }
 
-    setActionStatus('Analyzing video…');
+    setActionStatus('Analyzing videoâ¦');
     try {
     // Debug: log the time range being sent to server
     console.log('[DEBUG] Sending analyze-for-animation with timeRange:', JSON.stringify(request.timeRange));
@@ -1453,7 +1453,7 @@ export default function Home() {
       throw new Error('Please upload a video first to start a session');
     }
 
-    setActionStatus('Rendering animation…');
+    setActionStatus('Rendering animationâ¦');
     try {
     const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/render-from-concept`, {
       method: 'POST',
@@ -1521,7 +1521,7 @@ export default function Home() {
       throw new Error('Please upload a video first to start a session');
     }
 
-    setActionStatus('Generating kinetic text…');
+    setActionStatus('Generating kinetic textâ¦');
     try {
     const response = await fetch(`${FFMPEG_SERVER_URL}/session/${session.sessionId}/generate-transcript-animation`, {
       method: 'POST',
@@ -1668,7 +1668,7 @@ export default function Home() {
       throw new Error('Please upload a video first');
     }
 
-    setActionStatus('Generating contextual animation…');
+    setActionStatus('Generating contextual animationâ¦');
     try {
       // Call the server to generate contextual animation
       // This endpoint will:
@@ -1777,7 +1777,7 @@ export default function Home() {
       throw new Error('No active session');
     }
 
-    setActionStatus('Editing animation…');
+    setActionStatus('Editing animationâ¦');
     try {
     // Get available assets to pass to the AI
     const availableAssets = assets
@@ -1902,9 +1902,9 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <img src="/YRSAstudio.png" alt="YRSAstudio" className="w-8 h-8 rounded-lg object-contain" />
+            <img src="/argos-logo.svg" alt="Argos" className="w-8 h-8 rounded-lg object-contain" />
             <h1 className="text-xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-              YRSAstudio
+              Argos
             </h1>
           </div>
           <div className="flex items-center gap-1">
@@ -1929,7 +1929,7 @@ export default function Home() {
                 : <Save className="w-4 h-4" />}
             </button>
           </div>
-          {/* Status indicator — always visible */}
+          {/* Status indicator â always visible */}
           <div className="flex items-center gap-2 px-2.5 py-1.5 bg-zinc-800/80 rounded-lg min-w-[170px]">
             {(actionStatus || isProcessing) ? (
               <Loader2 className="w-3 h-3 animate-spin text-orange-400 flex-shrink-0" />
@@ -1938,7 +1938,7 @@ export default function Home() {
             )}
             <div className="flex flex-col min-w-0 flex-1">
               <span className={`text-xs truncate ${actionStatus || currentStatus || isProcessing ? 'text-zinc-300' : 'text-zinc-500'}`}>
-                {actionStatus || currentStatus || (isProcessing ? 'Processing…' : 'Inactive')}
+                {actionStatus || currentStatus || (isProcessing ? 'Processingâ¦' : 'Inactive')}
               </span>
               {renderProgress !== null && (
                 <div className="flex items-center gap-1.5 mt-0.5">
