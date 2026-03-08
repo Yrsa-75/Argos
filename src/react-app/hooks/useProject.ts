@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 
 const WORKER_URL = import.meta.env.VITE_WORKER_URL || '';
 const WORKER_TOKEN = import.meta.env.VITE_WORKER_SECRET_TOKEN || '';
-const R2_PUBLIC_URL = import.meta.env.VITE_R2_PUBLIC_URL || '';
+// R2_PUBLIC_URL disponible via VITE_R2_PUBLIC_URL (utilisé dans les presigned URLs côté worker)
 const PROJECT_STORAGE_KEY = 'argos-project';
 const SESSION_STORAGE_KEY = 'argos-session';
 
@@ -18,7 +18,7 @@ export interface Asset {
   thumbnailUrl: string | null;
   streamUrl?: string; // URL with cache-busting timestamp
   aiGenerated?: boolean; // True if this is a Remotion-generated animation
-  sourceAssetId?: string; // Set on face-cropped assets â points to the original
+  sourceAssetId?: string; // Set on face-cropped assets Ã¢ÂÂ points to the original
   cropAspectRatio?: string; // Aspect ratio used when face-cropping ('9:16' | '1:1' | '16:9')
   bannerSegments?: { lines: string[]; startTime: number; endTime: number }[]; // Detected lower-thirds
 }
@@ -43,7 +43,7 @@ export interface TimelineClip {
     cropLeft?: number;
     cropRight?: number;
   };
-  // Lower-third banner overlay (no asset file â rendered as HTML in preview)
+  // Lower-third banner overlay (no asset file Ã¢ÂÂ rendered as HTML in preview)
   bannerData?: {
     lines: string[];
     bgcolor: string;
@@ -160,7 +160,7 @@ export function useProject() {
   useEffect(() => {
     if (prevActiveTabIdRef.current !== activeTabId) {
       console.log('=================================================');
-      console.log('[useProject] â ï¸ activeTabId CHANGED!');
+      console.log('[useProject] Ã¢ÂÂ Ã¯Â¸Â activeTabId CHANGED!');
       console.log(`  FROM: "${prevActiveTabIdRef.current}" TO: "${activeTabId}"`);
       console.log('=================================================');
       console.trace('[useProject] Stack trace for activeTabId change:');
@@ -195,8 +195,8 @@ export function useProject() {
   useEffect(() => { captionDataRef.current = captionData; }, [captionData]);
   useEffect(() => { projectFilenameRef.current = projectFilename; }, [projectFilename]);
 
-  // ââ Undo / Redo (two separate stacks, max 10 undo steps) âââââââââââââââââ
-  // undoStack: states to restore when undoing (LIFO â last pushed = next undo target)
+  // Ã¢ÂÂÃ¢ÂÂ Undo / Redo (two separate stacks, max 10 undo steps) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // undoStack: states to restore when undoing (LIFO Ã¢ÂÂ last pushed = next undo target)
   // redoStack: states saved during undo, restored by redo
   type HistorySnapshot = { clips: TimelineClip[]; captionData: Record<string, CaptionData> };
   const undoStackRef = useRef<HistorySnapshot[]>([]);
@@ -344,7 +344,7 @@ export function useProject() {
       }
       const { uploadUrl, publicUrl } = await presignResponse.json();
 
-      // 2. Upload direct → R2
+      // 2. Upload direct â R2
       setStatus(`Uploading ${file.name} to storage...`);
       const uploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
@@ -353,7 +353,7 @@ export function useProject() {
       });
       if (!uploadResponse.ok) throw new Error(`Upload failed: ${uploadResponse.status}`);
 
-      // 3. Métadonnées locales
+      // 3. MÃ©tadonnÃ©es locales
       const isVideo = file.type.startsWith('video/');
       const isAudio = file.type.startsWith('audio/');
       const fileType: 'video' | 'image' | 'audio' = isVideo ? 'video' : isAudio ? 'audio' : 'image';
@@ -512,7 +512,7 @@ export function useProject() {
       // Remove the clip
       const filtered = prev.filter(c => c.id !== clipId);
 
-      // Never ripple caption tracks â captions have absolute time positions tied to speech
+      // Never ripple caption tracks Ã¢ÂÂ captions have absolute time positions tied to speech
       if (!ripple || clipToDelete.trackId === 'T1') return filtered;
 
       // Ripple mode: shift subsequent clips on the same track backward
@@ -959,7 +959,7 @@ export function useProject() {
       setRenderProgress(100);
       setStatus('Render complete!');
 
-      // Return download URL â include dimensions so server can compute the format label
+      // Return download URL Ã¢ÂÂ include dimensions so server can compute the format label
       let downloadUrl = `${WORKER_URL}${result.downloadUrl}`;
       if (!preview && exportWidth && exportHeight) {
         downloadUrl += `?w=${exportWidth}&h=${exportHeight}`;
