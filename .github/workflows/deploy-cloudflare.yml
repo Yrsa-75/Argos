@@ -1,4 +1,4 @@
-# Workflow désactivé — le déploiement est géré par Cloudflare Pages directement.
+# Workflow désactivé — Cloudflare Pages déploie automatiquement depuis GitHub.
 name: Deploy (disabled)
 on:
   workflow_dispatch:
