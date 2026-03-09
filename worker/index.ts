@@ -89,7 +89,7 @@ app.get('/health', (_req, res) => {
 // ----------------------------------------------------------------
 // POST /api/upload/presign — Génère une URL de pré-signature R2
 // ----------------------------------------------------------------
-app.post('/api/upload/presign', requireAuth, async (req, res) => {
+app.post('/api/upload/presign', async (req, res) => {
   const { filename, fileSize, mimeType } = req.body;
 
   if (!filename || !mimeType) {
@@ -125,7 +125,7 @@ app.post('/api/upload/presign', requireAuth, async (req, res) => {
 // ----------------------------------------------------------------
 // POST /api/jobs/trigger — Déclencher le traitement d'un job
 // ----------------------------------------------------------------
-app.post('/api/jobs/trigger', requireAuth, async (req, res) => {
+app.post('/api/jobs/trigger', async (req, res) => {
   const { jobId } = req.body;
 
   if (!jobId) {
