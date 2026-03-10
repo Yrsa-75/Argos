@@ -1,10 +1,10 @@
 // ============================================================
-// ARGOS Worker — Point d'entrée (Railway)
+// ARGOS Worker â Point d'entrÃ©e (Railway)
 //
 // Ce serveur :
 // 1. Expose des endpoints HTTP (presigned URL, trigger manuel)
-// 2. Écoute Supabase Realtime pour les nouveaux jobs
-// 3. Exécute le pipeline séquentiellement
+// 2. Ãcoute Supabase Realtime pour les nouveaux jobs
+// 3. ExÃ©cute le pipeline sÃ©quentiellement
 // ============================================================
 import express from 'express';
 import cors from 'cors';
@@ -17,7 +17,7 @@ import { processJob } from './pipeline';
 import type { Job } from '../src/types/argos';
 
 // ----------------------------------------------------------------
-// Validation des variables d'environnement au démarrage
+// Validation des variables d'environnement au dÃ©marrage
 // ----------------------------------------------------------------
 const REQUIRED_ENV = [
   'SUPABASE_URL',
@@ -34,7 +34,7 @@ const REQUIRED_ENV = [
 
 for (const key of REQUIRED_ENV) {
   if (!process.env[key]) {
-    console.error(`❌ Variable manquante : ${key}`);
+    console.error(`â Variable manquante : ${key}`);
     process.exit(1);
   }
 }
@@ -74,7 +74,7 @@ function requireAuth(req: express.Request, res: express.Response, next: express.
 }
 
 // ----------------------------------------------------------------
-// GET /health — Health check pour Railway
+// GET /health â Health check pour Railway
 // ----------------------------------------------------------------
 app.get('/health', (_req, res) => {
   res.json({
@@ -87,7 +87,7 @@ app.get('/health', (_req, res) => {
 });
 
 // ----------------------------------------------------------------
-// POST /api/upload/presign — Génère une URL de pré-signature R2
+// POST /api/upload/presign â GÃ©nÃ¨re une URL de prÃ©-signature R2
 // ----------------------------------------------------------------
 app.post('/api/upload/presign', async (req, res) => {
   const { filename, fileSize, mimeType } = req.body;
@@ -123,7 +123,7 @@ app.post('/api/upload/presign', async (req, res) => {
 });
 
 // ----------------------------------------------------------------
-// POST /api/jobs/trigger — Déclencher le traitement d'un job
+// POST /api/jobs/trigger â DÃ©clencher le traitement d'un job
 // ----------------------------------------------------------------
 app.post('/api/jobs/trigger', async (req, res) => {
   const { jobId } = req.body;
@@ -145,7 +145,7 @@ app.post('/api/jobs/trigger', async (req, res) => {
   }
 
   if (job.status !== 'pending') {
-    res.status(400).json({ error: `Job déjà en statut: ${job.status}` });
+    res.status(400).json({ error: `Job dÃ©jÃ  en statut: ${job.status}` });
     return;
   }
 
@@ -154,20 +154,20 @@ app.post('/api/jobs/trigger', async (req, res) => {
 });
 
 // ----------------------------------------------------------------
-// Queue de traitement séquentielle
-// On traite un job à la fois pour ne pas saturer Railway
+// Queue de traitement sÃ©quentielle
+// On traite un job Ã  la fois pour ne pas saturer Railway
 // ----------------------------------------------------------------
 const processingQueue: Job[] = [];
 let isProcessing = false;
 
 function enqueueJob(job: Job): void {
   if (processingQueue.some(j => j.id === job.id)) {
-    console.log(`[Queue] Job ${job.id.slice(0, 8)} déjà en queue`);
+    console.log(`[Queue] Job ${job.id.slice(0, 8)} dÃ©jÃ  en queue`);
     return;
   }
 
   processingQueue.push(job);
-  console.log(`[Queue] Job ajouté: ${job.id.slice(0, 8)} (queue: ${processingQueue.length})`);
+  console.log(`[Queue] Job ajoutÃ©: ${job.id.slice(0, 8)} (queue: ${processingQueue.length})`);
 
   if (!isProcessing) {
     processNext();
@@ -186,7 +186,7 @@ async function processNext(): Promise<void> {
   try {
     await processJob(job);
   } catch (err) {
-    console.error(`[Queue] Erreur non gérée pour job ${job.id.slice(0, 8)}:`, err);
+    console.error(`[Queue] Erreur non gÃ©rÃ©e pour job ${job.id.slice(0, 8)}:`, err);
   }
 
   // Passer au job suivant
@@ -194,7 +194,7 @@ async function processNext(): Promise<void> {
 }
 
 // ----------------------------------------------------------------
-// Supabase Realtime — Écouter les nouveaux jobs "pending"
+// Supabase Realtime â Ãcouter les nouveaux jobs "pending"
 // ----------------------------------------------------------------
 function startRealtimeListener(): void {
   console.log('[Realtime] Connexion Supabase Realtime...');
@@ -212,7 +212,7 @@ function startRealtimeListener(): void {
       (payload) => {
         const job = payload.new as Job;
         if (job.source_url && job.status === 'pending') {
-          console.log(`[Realtime] Nouveau job détecté: ${job.id.slice(0, 8)}`);
+          console.log(`[Realtime] Nouveau job dÃ©tectÃ©: ${job.id.slice(0, 8)}`);
           enqueueJob(job);
         }
       }
@@ -223,18 +223,18 @@ function startRealtimeListener(): void {
 }
 
 // ----------------------------------------------------------------
-// Démarrage
+// DÃ©marrage
 // ----------------------------------------------------------------
 const PORT = process.env.PORT ?? 3001;
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Argos Worker démarré sur port ${PORT}`);
-  console.log(`📡 Écoute des jobs Supabase...`);
+  console.log(`\nð Argos Worker dÃ©marrÃ© sur port ${PORT}`);
+  console.log(`ð¡ Ãcoute des jobs Supabase...`);
   startRealtimeListener();
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('[Worker] SIGTERM reçu, arrêt gracieux...');
+  console.log('[Worker] SIGTERM reÃ§u, arrÃªt gracieux...');
   process.exit(0);
 });
