@@ -1,10 +1,10 @@
 // ============================================================
-// ARGOS — Upload direct vers Cloudflare R2
+// ARGOS â Upload direct vers Cloudflare R2
 //
 // Flow d'upload (pour les gros fichiers sans passer par un serveur) :
 // 1. Frontend demande une presigned URL au Worker Railway
 // 2. Frontend upload directement en PUT vers R2
-// 3. Worker reçoit l'URL finale et démarre le pipeline
+// 3. Worker reÃ§oit l'URL finale et dÃ©marre le pipeline
 // ============================================================
 
 export interface UploadProgress {
@@ -12,13 +12,13 @@ export interface UploadProgress {
   loaded: number;
   total: number;
   speed: number;  // bytes/sec
-  eta: number;    // secondes restantes estimées
+  eta: number;    // secondes restantes estimÃ©es
 }
 
 export interface PresignedUrlResponse {
-  uploadUrl: string;   // URL PUT signée R2
+  uploadUrl: string;   // URL PUT signÃ©e R2
   publicUrl: string;   // URL publique finale du fichier
-  key: string;         // Clé dans le bucket
+  key: string;         // ClÃ© dans le bucket
 }
 
 // ----------------------------------------------------------------
@@ -31,13 +31,11 @@ export async function getPresignedUploadUrl(
   mimeType: string
 ): Promise<PresignedUrlResponse> {
   const workerUrl = import.meta.env.VITE_WORKER_URL as string;
-  const token = import.meta.env.VITE_WORKER_SECRET_TOKEN as string;
 
   const response = await fetch(`${workerUrl}/api/upload/presign`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
     },
     body: JSON.stringify({ filename, fileSize, mimeType }),
   });
@@ -84,16 +82,16 @@ export async function uploadToR2(
       if (xhr.status >= 200 && xhr.status < 300) {
         resolve();
       } else {
-        reject(new Error(`Upload échoué : HTTP ${xhr.status}`));
+        reject(new Error(`Upload Ã©chouÃ© : HTTP ${xhr.status}`));
       }
     });
 
     xhr.addEventListener('error', () => {
-      reject(new Error('Erreur réseau pendant l\'upload'));
+      reject(new Error('Erreur rÃ©seau pendant l\'upload'));
     });
 
     xhr.addEventListener('abort', () => {
-      reject(new Error('Upload annulé'));
+      reject(new Error('Upload annulÃ©'));
     });
 
     xhr.open('PUT', presignedUrl);
@@ -113,12 +111,12 @@ export async function uploadVideo(
   // Validation
   const maxSize = 4 * 1024 * 1024 * 1024; // 4 GB
   if (file.size > maxSize) {
-    throw new Error('Le fichier dépasse la limite de 4 GB');
+    throw new Error('Le fichier dÃ©passe la limite de 4 GB');
   }
 
   const allowedTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm'];
   if (!allowedTypes.includes(file.type)) {
-    throw new Error('Format non supporté. Utilise MP4, MOV, AVI ou WebM');
+    throw new Error('Format non supportÃ©. Utilise MP4, MOV, AVI ou WebM');
   }
 
   // 1. Obtenir la presigned URL
