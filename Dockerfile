@@ -1,26 +1,44 @@
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 
-RUN apk add --no-cache ffmpeg curl && rm -rf /var/cache/apk/*
+# System deps: ffmpeg + Python + libs for MediaPipe/OpenCV
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+        curl \
+            python3 \
+                python3-pip \
+                    python3-dev \
+                        libglib2.0-0 \
+                            libsm6 \
+                                libxext6 \
+                                    libxrender1 \
+                                        libgomp1 \
+                                            && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+                                            # Python packages for smart crop
+                                            RUN pip3 install --break-system-packages \
+                                                mediapipe \
+                                                    opencv-python-headless
 
-# Utiliser le package.json dédié au worker (sans conflits frontend)
-COPY worker/package.json ./package.json
+                                                    WORKDIR /app
 
-# Installation propre sans conflits
-RUN npm install
+                                                    # Utiliser le package.json dédié au worker (sans conflits frontend)
+                                                    COPY worker/package.json ./package.json
 
-# Copier le code
-COPY src/ ./src/
-COPY worker/ ./worker/
-COPY tsconfig*.json ./
+                                                    # Installation propre sans conflits
+                                                    RUN npm install
 
-ENV NODE_ENV=production
-ENV PORT=3001
+                                                    # Copier le code
+                                                    COPY src/ ./src/
+                                                    COPY worker/ ./worker/
+                                                    COPY scripts/ ./scripts/
+                                                    COPY tsconfig*.json ./
 
-EXPOSE 3001
+                                                    ENV NODE_ENV=production
+                                                    ENV PORT=3001
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:3001/health || exit 1
+                                                    EXPOSE 3001
 
-CMD ["npx", "tsx", "worker/index.ts"]
+                                                    HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+                                                        CMD curl -f http://localhost:3001/health || exit 1
+
+                                                        CMD ["npx", "tsx", "worker/index.ts"]
